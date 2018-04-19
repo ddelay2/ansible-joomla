@@ -1,0 +1,90 @@
+---
+
+- name: Import nginx repo key
+  apt_key: url="https://nginx.ru/keys/nginx_signing.key" state=present
+
+- name: Configure nginx repo
+  apt_repository: repo="deb http://nginx.org/packages/debian/ stretch nginx" state=present
+
+- name: Import dotdeb repo key
+  apt_key: url="https://www.dotdeb.org/dotdeb.gpg" state=present
+
+- name: Configure dotdeb repo
+  apt_repository: repo="deb http://packages.dotdeb.org stretch all" state=present
+
+- name: Install software
+  apt: name={{item}} state=present update_cache=yes
+  with_items:
+    - unzip
+    - nginx
+    - mysql-server
+    - php
+    - php-fpm
+    - php-mysql
+    - php-mcrypt
+    - php-xml
+    - php-gd
+    - php-soap
+    - php-zip
+
+- include: fpm_pool.yml fpm_pool_name={{item}} fpm_pool_user={{item}}
+  with_items:
+    - www-test1
+    - www-test2
+
+- include: nginx_vhost.yml nginx_site_name={{item}}.local nginx_site_dir=www-{{item}}
+  with_items:
+    - test1
+    - test2
+
+- name: Add web groups
+  user: name={{item}}
+  with_items:
+    - www-test1
+    - www-test2
+
+- name: Add web users
+  user: name={{item}} group={{item}} shell="/usr/sbin/nologin" home="/var/www/{{item}}" createhome=no
+  with_items:
+    - www-test1
+    - www-test2
+
+- name: Edit /etc/php/7.0/fpm/php.ini for memory_limit
+  replace: dest=/etc/php/7.0/fpm/php.ini regexp="^memory_limit.*" replace="memory_limit=256M" backup=yes
+
+- name: Add "reset_timedout_connection on" to nginx.conf
+  lineinfile:
+    dest: /etc/nginx/nginx.conf
+    line: "	reset_timedout_connection on;"
+    insertafter: "http {"
+    state: present
+    backup: yes
+
+- name: Set MySQL max_connections
+  copy: src="roles/web-server/templates/max_connections.cnf" dest="/etc/mysql/conf.d/max_connections.cnf"
+
+- name: Download Joomla
+  get_url: url={{joomla_url}} dest="~/joomla.zip"
+
+- name: Clear DocumentRoot directory
+  file: path="/var/www/{{item}}" state=directory owner={{item}} group=www-data
+  with_items:
+    - www-test1
+    - www-test2
+
+- name: Unpack Joomla
+  unarchive: copy=no src="~/joomla.zip" dest="/var/www/{{item}}" owner={{item}} group=nginx mode=0750
+  with_items:
+    - www-test1
+    - www-test2
+
+- name: Disable and stop apache2
+  service: name=apache2 state=stopped enabled=no
+
+- name: Enable and start services
+  service: name={{item}} state=restarted enabled=yes
+  with_items:
+    - nginx
+    - php7.0-fpm
+    - mysqld
+

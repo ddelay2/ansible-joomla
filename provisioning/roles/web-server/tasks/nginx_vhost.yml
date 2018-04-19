@@ -1,0 +1,3 @@
+---
+- name: Configure nginx site
+  template: src=nginx_joomla.conf.j2 dest=/etc/nginx/conf.d/{{nginx_site_name}}.conf

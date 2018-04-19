@@ -1,0 +1,13 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+
+  vars_files:
+    - vars/main.yml
+
+  roles:
+    - web-server
+
+  remote_user: root
+  serial: 1

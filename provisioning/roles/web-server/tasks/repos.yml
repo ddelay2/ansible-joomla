@@ -1,0 +1,12 @@
+---
+- name: Import nginx repo key
+  apt_key: url="https://nginx.ru/keys/nginx_signing.key" state=present
+
+- name: Configure nginx repo
+  apt_repository: repo="deb http://nginx.org/packages/debian/ stretch nginx" state=present
+
+- name: Import dotdeb repo key
+  apt_key: url="https://www.dotdeb.org/dotdeb.gpg" state=present
+
+- name: Configure dotdeb repo
+  apt_repository: repo="deb http://packages.dotdeb.org stretch all" state=present

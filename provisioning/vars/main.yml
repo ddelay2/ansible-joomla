@@ -1,0 +1,5 @@
+---
+
+joomla_version: "3.8.7"
+joomla_url: "https://github.com/joomla/joomla-cms/releases/download/{{joomla_version}}/Joomla_{{joomla_version}}-Stable-Full_Package.zip"
+#joomla_url: "http://10.35.17.107/Joomla_3.8.7-Stable-Full_Package.zip"

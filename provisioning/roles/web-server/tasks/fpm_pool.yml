@@ -1,0 +1,3 @@
+---
+- name: Configure php-fpm pools
+  template: src=fpm.conf.j2 dest=/etc/php/7.0/fpm/pool.d/{{fpm_pool_name}}.conf
