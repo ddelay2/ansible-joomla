@@ -71,12 +71,12 @@ Vagrant.configure("2") do |config|
 
   config.vm.provider "virtualbox" do |v|
     v.name = "debian_v"
-    v.memory = 512
+    v.memory = 1280
     v.cpus = 2
   end
   config.vm.network "private_network", ip: "192.168.13.1"
   config.vm.network "private_network", ip: "192.168.13.2"
-  config.vm.network "public_network", type: "dhcp", bridge: "eno1"
+#  config.vm.network "public_network", type: "dhcp", bridge: "eno1"
 
   config.vm.provision "ansible_local" do |ansible|
     ansible.playbook = "provisioning/playbook.yml"

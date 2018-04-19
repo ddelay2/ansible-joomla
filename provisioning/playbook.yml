@@ -8,6 +8,3 @@
 
   roles:
     - web-server
-
-  remote_user: root
-  serial: 1
