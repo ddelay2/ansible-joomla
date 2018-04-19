@@ -76,7 +76,7 @@ Vagrant.configure("2") do |config|
   end
   config.vm.network "private_network", ip: "192.168.13.1"
   config.vm.network "private_network", ip: "192.168.13.2"
-#  config.vm.network "public_network", type: "dhcp", bridge: "eno1"
+  config.vm.network "public_network", type: "dhcp", bridge: "eth0"
 
   config.vm.provision "ansible_local" do |ansible|
     ansible.playbook = "provisioning/playbook.yml"
